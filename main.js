@@ -48,7 +48,6 @@ canvas.addEventListener("mousedown", async () =>
     }
 });
 
-// Replicate proxy: your backend calls Replicate and returns the model output (no API key in frontend)
 const REPLICATE_PROXY_URL = "https://itp-ima-replicate-proxy.web.app/api/create_n_get";
 const REPLICATE_MODEL = "meta/llama-4-maverick-instruct";
 
@@ -94,14 +93,13 @@ async function getAssociationsAI(word) {
     console.log("prediction:", prediction);
     if (!prediction.output) return fallbackAssociations(word);
 
-    // Replicate output is usually prediction.output (string OR array of strings)
     let raw = prediction.output;
     let text = "";
 
     if (typeof raw === "string") text = raw;
     else if (Array.isArray(raw)) text = raw.join("");
 
-    // Extract JSON object if the model adds extra text
+
     const start = text.indexOf("{");
     const end = text.lastIndexOf("}");
     if (start === -1 || end === -1) return fallbackAssociations(word);
