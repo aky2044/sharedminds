@@ -1,0 +1,340 @@
+/* The Delaroche Ghost — Semantic Collage Engine */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-deep: #0c0c0e;
+    --bg-stage: #12121a;
+    --panel-bg: rgba(18, 18, 26, 0.92);
+    --panel-border: #2a2a3a;
+    --text: #e0e0e8;
+    --text-dim: #8888a0;
+    --accent: #8b7355;
+    --accent-glow: rgba(139, 115, 85, 0.4);
+    --selected: #c4a574;
+    --selected-glow: rgba(196, 165, 116, 0.5);
+    --recombine-glow: rgba(160, 200, 180, 0.35);
+    --error: #a06060;
+}
+
+body {
+    font-family: "Cormorant Garamond", "Georgia", serif;
+    background: var(--bg-deep);
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* Stage: full window, subtle background */
+#stage {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+#stage-bg {
+    position: absolute;
+    inset: 0;
+    background: var(--bg-stage);
+    background-image:
+        linear-gradient(rgba(40, 40, 55, 0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(40, 40, 55, 0.15) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+}
+
+#stage-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+}
+
+#items-container {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+#items-container > * {
+    pointer-events: auto;
+}
+
+#recombine-preview {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+#recombine-preview.visible {
+    opacity: 1;
+}
+
+/* Collage items */
+.item {
+    position: absolute;
+    cursor: grab;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px;
+    border-radius: 6px;
+    transition: box-shadow 0.2s ease, filter 0.2s ease;
+    will-change: transform;
+}
+
+.item:active {
+    cursor: grabbing;
+}
+
+.item.selected {
+    outline: 2px solid var(--selected);
+    outline-offset: 4px;
+    box-shadow: 0 0 24px var(--selected-glow);
+}
+
+.item.recombine-target {
+    box-shadow: 0 0 20px var(--recombine-glow);
+}
+
+.item .item-image-wrap {
+    width: 140px;
+    height: 140px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: rgba(30, 30, 40, 0.9);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.item .item-image-wrap img {
+    width: 50%;
+    height: 50%;
+    object-fit: cover;
+    display: block;
+    transform: scale(2);
+    transform-origin: center center;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+.item .item-image-wrap::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    opacity: 0.55;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+}
+
+.item .item-image-wrap .shimmer {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        110deg,
+        rgba(50, 50, 60, 0.9) 0%,
+        rgba(70, 70, 85, 0.9) 40%,
+        rgba(50, 50, 60, 0.9) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.item .item-label {
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--text-dim);
+    max-width: 160px;
+    text-align: center;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Left panel */
+#panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    background: var(--panel-bg);
+    border-right: 1px solid var(--panel-border);
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    z-index: 100;
+}
+
+#panel-title {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+}
+
+.panel-subtitle {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-top: -8px;
+}
+
+#panel label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+}
+
+#summon-input {
+    width: 100%;
+    padding: 10px 12px;
+    background: rgba(30, 30, 40, 0.8);
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.95rem;
+}
+
+#summon-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.panel-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.panel-actions button {
+    padding: 8px 14px;
+    background: rgba(40, 40, 55, 0.9);
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.panel-actions button:hover {
+    background: rgba(60, 60, 75, 0.9);
+    border-color: var(--accent);
+}
+
+.panel-actions button:active {
+    background: rgba(50, 50, 65, 0.9);
+}
+
+#btn-toggle-mode {
+    flex: 1 1 100%;
+}
+
+.panel-hint {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--panel-border);
+}
+
+.panel-hint p {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+}
+
+.panel-hint kbd {
+    background: rgba(50, 50, 60, 0.8);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+}
+
+/* HUD */
+#hud {
+    position: fixed;
+    bottom: 0;
+    left: 280px;
+    right: 0;
+    height: 36px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    background: rgba(12, 12, 14, 0.85);
+    border-top: 1px solid var(--panel-border);
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    z-index: 100;
+}
+
+#hud-mode {
+    color: var(--accent);
+}
+
+#hud-status.error {
+    color: var(--error);
+}
+
+#hud-status.loading {
+    color: var(--text-dim);
+    font-style: italic;
+}
+
+/* Recombine preview line */
+.recombine-line {
+    position: absolute;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--recombine-glow), transparent);
+    transform-origin: left center;
+    border-radius: 1px;
+    pointer-events: none;
+}
+
+.item-inner {
+    position: relative;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+@keyframes jitter {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(2px, -2px); }
+    75% { transform: translate(-2px, 2px); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+}
+
+@keyframes birth_pulse {
+    0% { transform: scale(0.8); opacity: 0; }
+    60% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
