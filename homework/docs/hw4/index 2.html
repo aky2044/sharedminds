@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>collage</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="stage">
+        <div id="stage-bg" aria-hidden="true"></div>
+        <div id="items-container"></div>
+        <div id="recombine-preview" aria-hidden="true"></div>
+    </div>
+
+    <aside id="panel">
+        <h1 id="panel-title">hw3</h1>
+        <p class="panel-subtitle">collage</p>
+
+        <label for="summon-input">Summon</label>
+        <input type="text" id="summon-input" placeholder="e.g. The weight of a Tuesday" autocomplete="off" />
+
+        <div class="panel-actions">
+            <button type="button" id="btn-summon">Summon</button>
+            <button type="button" id="btn-load">Load JSON</button>
+        </div>
+
+        <div class="panel-hint">
+            <p>Select item → scroll to scale, <kbd>[</kbd> <kbd>]</kbd> layer</p>
+        </div>
+    </aside>
+
+    <div id="hud">
+        <span id="hud-selected">Selected: —</span>
+        <span id="hud-status"></span>
+    </div>
+
+    <input type="file" id="file-input" accept=".json" hidden />
+
+    <script src="main.js"></script>
+</body>
+</html>

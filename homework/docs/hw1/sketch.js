@@ -1,52 +1,52 @@
 
 const CFG = {
     // nodes
-    baseRadius: 6.0,                 // bigger dots
+    baseRadius: 6.0,                 
     radiusGainFromStrength: 2.0,
   
     // hover/branching
-    hoverDetectRadius: 25,           // how close cursor must be to "hover" (increased)
-    branchCooldownMs: 150,          // branching cooldown (slightly slower for more reliable attempts)
-    branchChanceBasePerSec: 1.0,    // per-second branching chance at hoverStrength=0 (much higher)
-    branchChanceMaxPerSec: 4.0,     // faster max branching
-    hoverToMaxBranchSec: 1.5,       // seconds of continuous hover to reach near-max chance (faster)
-    maxChildrenPerNode: 7,          // cap direct branches at 7
+    hoverDetectRadius: 25,           
+    branchCooldownMs: 150,          
+    branchChanceBasePerSec: 1.0,    
+    branchChanceMaxPerSec: 4.0,   
+    hoverToMaxBranchSec: 1.5,      
+    maxChildrenPerNode: 7,          
     branchDistanceMin: 18,
     branchDistanceMax: 55,
-    minNodeSeparation: 25,           // minimum distance between any two nodes
-    secondaryBranchChance: 0.25,    // increased chance for secondary branching
-    maxSecondaryBranches: 5,        // allow more secondary branches
-    spawnDuration: 0.4,            // seconds for fade-in/expand animation
-    distanceDecayFactor: 0.7,       // how much persistence decays per generation
-    maxSpawnAttempts: 8,            // max attempts to find a valid spawn position
+    minNodeSeparation: 25,           
+    secondaryBranchChance: 0.25,   
+    maxSecondaryBranches: 5,        
+    spawnDuration: 0.4,            
+    distanceDecayFactor: 0.7,       
+    maxSpawnAttempts: 8,            
   
     // strengthening (pulse glow system)
-    pulsePhase1Sec: 10.0,           // first color transition at 10s
-    pulsePhase2Sec: 20.0,           // second color transition at 20s
-    pulsePhase3Sec: 30.0,           // permanent at 30s
-    pulseGlowRadius: 15,            // radius of glow effect
-    pulseGlowIntensity: 0.4,        // glow opacity
+    pulsePhase1Sec: 10.0,           
+    pulsePhase2Sec: 20.0,           
+    pulsePhase3Sec: 30.0,           
+    pulseGlowRadius: 15,            
+    pulseGlowIntensity: 0.4,        
   
     // persistence based on hover time
-    basePersistenceSec: 5.0,         // base persistence after 5s hover
-    persistenceMultiplier: 8.0,      // multiplier for hover time -> persistence time
+    basePersistenceSec: 5.0,        
+    persistenceMultiplier: 8.0,      
   
     // fading of branches after leaving hovered node
-    fadeStepMs: 110,                // how often to mark one more child "fading"
-    childFadeSpeedPerSec: 0.3,      // slower fade (reduced from 0.8)
-    edgeFadeSpeedPerSec: 0.4,       // slower edge fade (reduced from 1.1)
+    fadeStepMs: 110,               
+    childFadeSpeedPerSec: 0.3,     
+    edgeFadeSpeedPerSec: 0.4,       
   
     // global fade (everything slowly ages)
-    idleFadePerSec: 0.01,           // slower idle fade (reduced from 0.02)
+    idleFadePerSec: 0.01,           
   
     // visuals
-    background: "#ffffff",          // white canvas
-    edgeBaseAlpha: 0.15,            // darker edges for white background
+    background: "#ffffff",        
+    edgeBaseAlpha: 0.15,            
     edgeWidth: 1.2,
-    nodeBaseColor: [0, 0, 0],       // black dots
-    pulseColor1: [100, 150, 255],   // blue pulse at 10s
-    pulseColor2: [150, 100, 255],   // purple pulse at 20s
-    pulseColor3: [255, 150, 100]    // orange pulse at 30s (permanent)
+    nodeBaseColor: [0, 0, 0],      
+    pulseColor1: [100, 150, 255],  
+    pulseColor2: [150, 100, 255],   
+    pulseColor3: [255, 150, 100]    
   };
   
   // ------------------------------------------------------------
@@ -85,20 +85,20 @@ const CFG = {
       this.children = []; // child ids in birth order
   
       this.age = 0;               // seconds alive
-      this.spawnAge = 0;          // age since spawn (for fade-in animation)
-      this.alpha = 0.0;           // node visibility (starts at 0 for fade-in)
-      this.edgeAlpha = 0.0;       // edge visibility to parent (starts at 0)
-      this.strength = 0.0;        // 0..1 (pulse phase: 0-10s, 10-20s, 20-30s, 30s+)
-      this.hoverTime = 0.0;       // continuous hover seconds
+      this.spawnAge = 0;          
+      this.alpha = 0.0;           
+      this.edgeAlpha = 0.0;       
+      this.strength = 0.0;       
+      this.hoverTime = 0.0;       
       this.isHovered = false;
-      this.permanent = false;     // true after 30s hover
-      this.persistUntil = 0;      // timestamp when node should start fading (0 = no persistence)
-      this.maxHoverTime = 0.0;    // maximum hover time achieved
-      this.distanceFromRoot = 0;  // generation/distance from root node
+      this.permanent = false;     
+      this.persistUntil = 0;      
+      this.maxHoverTime = 0.0;    
+      this.distanceFromRoot = 0; 
   
-      this.branchClockMs = 0;     // cooldown accumulator
-      this.fading = false;        // "is in fade-out mode"
-      this.fadeIndex = 0;         // how many children have been marked to fade
+      this.branchClockMs = 0;     
+      this.fading = false;        
+      this.fadeIndex = 0;         
       this.fadeTimerMs = 0;
       this.secondaryBranches = 0; // count of secondary branches
       
@@ -373,7 +373,7 @@ const CFG = {
     return true;
   }
   
-  // ------------------------------------------------------------
+  
   // Branching
   function attemptBranch(parent, dtSec) {
     if (!parent) return;
@@ -400,8 +400,8 @@ const CFG = {
     const childId = addNode(spawnPos.x, spawnPos.y, parent.id);
     const child = nodes.get(childId);
     
-    // chance for secondary branching (child branches off into another thought)
-    // allow secondary branching on the child itself, not just counting on parent
+    
+    
     if (child && child.children.length < CFG.maxChildrenPerNode && Math.random() < CFG.secondaryBranchChance) {
       const secondaryPos = findValidSpawnPosition(child.x, child.y, childId, rootNode);
       addNode(secondaryPos.x, secondaryPos.y, childId);
@@ -568,15 +568,15 @@ const CFG = {
           n.alpha = clamp01(n.alpha - CFG.idleFadePerSec * dtSec);
         }
       } else {
-        // Normal fade (only for non-root nodes, and only after spawn animation)
+       
         // Only fade if not being maintained by spawn animation
         if (n.spawnAge >= CFG.spawnDuration) {
           n.alpha = clamp01(n.alpha - CFG.idleFadePerSec * dtSec);
         }
       }
   
-      // fading behavior for branch children (newest fades first)
-      // If parent is in fade mode, it gradually marks children as fading.
+      
+      
       if (n.parentId == null && id !== rootId) {
         // (not used; kept as placeholder)
       }
@@ -598,9 +598,7 @@ const CFG = {
     // Handle parent fade sequencing separately (needs to run even if parent isn't marked fading)
     for (const [id, n] of nodes) {
       if (!n.fading && n.fadeTimerMs >= 0 && n.fadeIndex >= 0) {
-        // We only want sequencing active after beginFadeOutBranch
-        // We'll detect it by: fadeTimerMs is 0 and fadeIndex is 0 immediately after beginFadeOutBranch,
-        // but that is also true initially. So we need a real flag:
+        
       }
     }
   
@@ -663,7 +661,6 @@ const CFG = {
       const p = nodes.get(n.parentId);
       if (!p) continue;
   
-      // use the minimum edge alpha between parent and child for smooth fade-in
       const edgeAlpha = Math.min(n.edgeAlpha, p.edgeAlpha || 1.0);
       const a = CFG.edgeBaseAlpha * Math.min(n.alpha, p.alpha) * edgeAlpha;
       if (a <= 0.01) continue;
@@ -690,16 +687,13 @@ const CFG = {
       //use the node's alpha directly (spawn animation handles it)
       const alpha = n.permanent ? 1.0 : n.alpha;
   
-      //only skip drawing if truly invisible (but allow very low alpha during spawn)
       if (alpha <= 0.001 && n.spawnAge >= CFG.spawnDuration) continue;
   
       //get pulse color based on hover time
       const pulseCol = getPulseColor(n.isHovered ? n.hoverTime : n.maxHoverTime);
       const pulsePhase = getPulsePhase(n.isHovered ? n.hoverTime : n.maxHoverTime);
       
-      //draw glowing pulse effect if there's any hover time
       if (pulsePhase > 0.1) {
-        //add pulsing animation (breathing effect)
         const pulseAnim = 0.5 + 0.5 * Math.sin(n.age * 2.0); // pulse every ~3 seconds
         const baseGlowAlpha = CFG.pulseGlowIntensity * clamp01(pulsePhase / 3.0) * alpha;
         const glowAlpha = baseGlowAlpha * (0.7 + 0.3 * pulseAnim); // pulse between 70-100%
