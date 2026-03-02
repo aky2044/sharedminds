@@ -14,10 +14,6 @@ import {
   orderBy,
 } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
 
-// ============================================================
-//  Firebase
-// ============================================================
-
 const firebaseConfig = {
   apiKey: "AIzaSyCw4g-CFOogIk9YgI865ZWhHwgvjDyXxwc",
   authDomain: "classtest-2dac4.firebaseapp.com",
@@ -31,10 +27,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const creaturesCol = collection(db, "creatures");
-
-// ============================================================
-//  DOM
-// ============================================================
 
 const nameScreen = document.getElementById("nameScreen");
 const googleSignInBtn = document.getElementById("googleSignInBtn");
@@ -52,10 +44,6 @@ const doneBtn = document.getElementById("doneBtn");
 const oceanCanvas = document.getElementById("oceanCanvas");
 const oceanCtx = oceanCanvas.getContext("2d");
 const newCreatureBtn = document.getElementById("newCreatureBtn");
-
-// ============================================================
-//  State
-// ============================================================
 
 let userName = "";
 let drawing = false;
@@ -78,10 +66,6 @@ let depthCounter = 0;
 let draggedCreature = null;
 let dragOffsetX = 0;
 let dragOffsetY = 0;
-
-// ============================================================
-//  Glow brush helpers
-// ============================================================
 
 const GLOW_LAYERS = [
   { blur: 40, alpha: 0.08, extra: 22 },
@@ -144,10 +128,6 @@ function drawPlainStroke(ctx, stroke) {
   ctx.restore();
 }
 
-// ============================================================
-//  Creature offscreen canvas factory
-// ============================================================
-
 function buildCreatureCanvas(strokes) {
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   for (const s of strokes) {
@@ -182,10 +162,6 @@ function buildCreatureCanvas(strokes) {
   return { canvas: c, width: w, height: h };
 }
 
-// ============================================================
-//  Screen management
-// ============================================================
-
 function showPhase(phase) {
   nameScreen.classList.toggle("hidden", phase !== "name");
   drawScreen.classList.toggle("hidden", phase !== "draw");
@@ -193,11 +169,6 @@ function showPhase(phase) {
   if (phase === "draw") initDrawCanvas();
 }
 
-// ============================================================
-//  Phase 1 — Auth (Google OAuth)
-// ============================================================
-
-/** Extract display name from email (e.g. john.doe@gmail.com → John Doe) */
 function getNameFromEmail(email) {
   if (!email) return "Unknown";
   const localPart = email.split("@")[0];
@@ -244,7 +215,6 @@ function onUserSignedOut() {
   showPhase("name");
 }
 
-// Auth state: gate entry to the ocean
 onAuthStateChanged(auth, (user) => {
   if (user) {
     onUserSignedIn(user);
@@ -256,10 +226,6 @@ onAuthStateChanged(auth, (user) => {
 if (googleSignInBtn) {
   googleSignInBtn.addEventListener("click", signInWithGoogle);
 }
-
-// ============================================================
-//  Phase 2 — Draw creature
-// ============================================================
 
 function initDrawCanvas() {
   const size = Math.min(400, window.innerWidth - 48, window.innerHeight - 260);
@@ -414,10 +380,6 @@ doneBtn.addEventListener("click", () => {
     .catch((err) => console.error("Save failed:", err));
 });
 
-// ============================================================
-//  Phase 3 — Ocean
-// ============================================================
-
 document.addEventListener("mousemove", (e) => {
   parallaxTargetX = (e.clientX / window.innerWidth - 0.5) * 2;
   parallaxTargetY = (e.clientY / window.innerHeight - 0.5) * 2;
@@ -455,7 +417,6 @@ function animate() {
 
   oceanCtx.clearRect(0, 0, w, h);
 
-  // --- Particles (depth-layered) ---
   for (const p of particles) {
     p.y -= p.speed;
     if (p.y < -4) {
@@ -471,7 +432,6 @@ function animate() {
     oceanCtx.fill();
   }
 
-  // --- Creatures (sorted back-to-front by depth) ---
   const baseDim = Math.min(220, Math.min(w, h) * 0.24);
 
   for (const c of creatures) {
@@ -479,13 +439,11 @@ function animate() {
       c.oceanX += c.vx / w;
       c.oceanY += c.vy / h;
 
-      // Wrap around edges with padding
       if (c.oceanX < -0.05) c.oceanX = 1.05;
       else if (c.oceanX > 1.05) c.oceanX = -0.05;
       if (c.oceanY < -0.05) c.oceanY = 1.05;
       else if (c.oceanY > 1.05) c.oceanY = -0.05;
 
-      // Gently change direction over time
       c.vx += (Math.random() - 0.5) * 0.02;
       c.vy += (Math.random() - 0.5) * 0.02;
       const spd = Math.sqrt(c.vx * c.vx + c.vy * c.vy);
@@ -536,10 +494,6 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
-// ============================================================
-//  Firebase listener — populate ocean
-// ============================================================
-
 const loadedIds = new Set();
 
 function addCreature(id, data) {
@@ -580,15 +534,7 @@ onSnapshot(creaturesQuery, (snapshot) => {
   });
 }, (err) => console.error("Firestore listener error:", err));
 
-// ============================================================
-//  New creature button
-// ============================================================
-
 newCreatureBtn.addEventListener("click", () => showPhase("draw"));
-
-// ============================================================
-//  Drag creatures on ocean
-// ============================================================
 
 function hitCreature(mx, my) {
   for (let i = creatures.length - 1; i >= 0; i--) {
@@ -649,11 +595,6 @@ oceanCanvas.addEventListener("touchmove", onOceanMove, { passive: false });
 oceanCanvas.addEventListener("touchend", onOceanUp, { passive: false });
 oceanCanvas.addEventListener("touchcancel", onOceanUp, { passive: false });
 
-// ============================================================
-//  Init
-// ============================================================
-
 window.addEventListener("resize", resizeOcean);
 resizeOcean();
 animate();
-// Phase is set by onAuthStateChanged (shows name/login screen if not signed in)
