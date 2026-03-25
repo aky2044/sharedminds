@@ -1,221 +1,102 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 html, body {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   overflow: hidden;
   background: #000;
   font-family: system-ui, -apple-system, sans-serif;
   color: #fff;
 }
 
-.hidden {
-  display: none !important;
-}
+#scene-container { position: fixed; inset: 0; z-index: 0; }
+#scene-container canvas { display: block; }
 
-/* ---------- Ocean canvas ---------- */
-
-#oceanCanvas {
+#panel {
   position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  z-index: 0;
-}
-
-/* ---------- Screens (overlays) ---------- */
-
-.screen {
-  position: fixed;
-  inset: 0;
+  top: 20px;
+  right: 20px;
   z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background: rgba(0, 0, 0, 0.92);
-  transition: opacity 0.5s ease;
-}
-
-
-/* ---------- Name screen ---------- */
-
-.name-box {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-}
-
-.name-box h1 {
-  font-weight: 200;
-  font-size: clamp(28px, 6vw, 48px);
-  letter-spacing: 8px;
-  color: #fff;
-}
-
-.subtitle {
-  color: #555;
-  font-size: 14px;
-  font-weight: 300;
-  letter-spacing: 1px;
-}
-
-.auth-prompt {
-  color: #888;
-  font-size: 14px;
-  font-weight: 300;
-  letter-spacing: 0.5px;
-  margin: 0;
-}
-
-.google-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   gap: 10px;
-  background: #fff;
-  color: #333;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 15px;
-  font-family: inherit;
-  font-weight: 500;
-  transition: opacity 0.2s, box-shadow 0.2s;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  width: 220px;
 }
 
-.google-btn:hover:not(:disabled) {
-  opacity: 0.9;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+.panel-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: rgba(255, 255, 255, 0.35);
 }
 
-.google-btn:disabled {
-  cursor: not-allowed;
-  opacity: 0.7;
+.panel-hint {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.2);
+  text-align: center;
+  line-height: 1.4;
 }
 
-.google-icon {
-  flex-shrink: 0;
-}
-
-.auth-error {
-  color: #e57373;
-  font-size: 13px;
-  margin-top: 8px;
-  min-height: 20px;
-}
-
-.auth-error.hidden {
-  visibility: hidden;
-}
-
-/* ---------- Draw screen ---------- */
-
-.draw-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-}
-
-.prompt {
-  color: #888;
-  font-size: 15px;
-  font-weight: 300;
-  letter-spacing: 0.5px;
-}
-
-#drawCanvas {
-  border: 1px solid #333;
-  border-radius: 6px;
+#draw-canvas {
+  width: 184px;
+  height: 184px;
   background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
   cursor: crosshair;
   touch-action: none;
 }
 
-/* ---------- Draw controls ---------- */
-
-.draw-controls {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-#brushSize {
-  width: 90px;
-  accent-color: #666;
-  cursor: pointer;
-}
-
-#undoBtn,
-#eraseBtn,
-#clearDrawBtn,
-#doneBtn {
-  background: transparent;
-  color: #888;
-  border: 1px solid #333;
-  padding: 6px 18px;
-  border-radius: 999px;
-  cursor: pointer;
-  font-size: 13px;
-  font-family: inherit;
-  transition: color 0.2s, border-color 0.2s, background 0.2s;
-}
-
-#undoBtn:hover,
-#eraseBtn:hover,
-#clearDrawBtn:hover {
-  color: #fff;
-  border-color: #666;
-}
-
-#eraseBtn.active {
-  background: #fff;
-  color: #000;
-  border-color: #fff;
-}
-
-#doneBtn {
-  background: #fff;
-  color: #000;
-  border-color: #fff;
-  font-weight: 500;
-}
-
-#doneBtn:hover {
-  opacity: 0.85;
-}
-
-/* ---------- New creature button ---------- */
-
-#newCreatureBtn {
-  position: fixed;
-  bottom: 28px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(8px);
-  color: #aaa;
+#type-select {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 10px 28px;
-  border-radius: 999px;
-  cursor: pointer;
-  font-size: 14px;
+  background: #000;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 11px;
   font-family: inherit;
-  letter-spacing: 0.5px;
-  transition: opacity 0.4s, color 0.2s, background 0.2s;
+  cursor: pointer;
+  outline: none;
 }
 
-#newCreatureBtn:hover {
-  background: rgba(255, 255, 255, 0.15);
+#type-select option { background: #000; color: #ccc; }
+
+.panel-actions { display: flex; gap: 6px; width: 100%; }
+
+.panel-actions button {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.panel-actions button:hover {
   color: #fff;
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
+#generate-btn {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+  font-weight: 600;
+}
+
+#generate-btn:hover { opacity: 0.85; }
+
+.panel-count {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.15);
+  letter-spacing: 1px;
+}
