@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deep Draw</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.169.0/build/three.module.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="scene-container"></div>
+
+  <div id="panel">
+    <p class="panel-title"></p>
+    <p class="panel-hint">Sketch a creature, pick its type, release it</p>
+    <canvas id="draw-canvas"></canvas>
+    <select id="type-select">
+      <option value="fish">Fish</option>
+      <option value="jellyfish">Jellyfish</option>
+      <option value="eel">Eel</option>
+    </select>
+    <div class="panel-actions">
+      <button id="clear-btn">Clear</button>
+      <button id="generate-btn">Release</button>
+    </div>
+    <p id="creature-count" class="panel-count">scroll = depth · ↑↓ = height</p>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
