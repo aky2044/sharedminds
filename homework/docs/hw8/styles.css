@@ -1,0 +1,102 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #000;
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #fff;
+}
+
+#scene-container { position: fixed; inset: 0; z-index: 0; }
+#scene-container canvas { display: block; }
+
+#panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 220px;
+}
+
+.panel-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.panel-hint {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.2);
+  text-align: center;
+  line-height: 1.4;
+}
+
+#draw-canvas {
+  width: 184px;
+  height: 184px;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+#type-select {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #000;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+#type-select option { background: #000; color: #ccc; }
+
+.panel-actions { display: flex; gap: 6px; width: 100%; }
+
+.panel-actions button {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.panel-actions button:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+#generate-btn {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+  font-weight: 600;
+}
+
+#generate-btn:hover { opacity: 0.85; }
+
+.panel-count {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.15);
+  letter-spacing: 1px;
+}
