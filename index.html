@@ -3,50 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Audio Sync</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.0/lib/p5.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.0/lib/addons/p5.sound.min.js"></script>
-  <script src="https://p5livemedia.itp.io/simplepeer.min.js"></script>
-  <script src="https://p5livemedia.itp.io/socket.io.js"></script>
-  <script src="https://p5livemedia.itp.io/p5livemedia.js"></script>
+  <title>The Icon and the Ghost</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <main id="split">
 
-  
-  <!-- Name entry -->
-  <div id="name-screen" class="screen-overlay active">
-    <input id="name-input" type="text" placeholder="enter your name" maxlength="20" autocomplete="off" spellcheck="false">
-    <button id="name-btn">enter</button>
+    <!-- ═══════ PLAYER A · THE CURSOR ═══════ -->
+    <section id="playerA-viewport">
+
+      <!-- macOS-style menu bar -->
+      <div class="menubar">
+        <span class="menu-item menu-logo">◉</span>
+        <span class="menu-item bold">Finder</span>
+        <span class="menu-item">File</span>
+        <span class="menu-item">Edit</span>
+        <span class="menu-item">View</span>
+        <span class="menu-item">Go</span>
+        <span class="menu-item">Window</span>
+        <span class="menu-item">Help</span>
+        <span class="menu-spacer"></span>
+        <span class="menu-item mono">CPU 12%</span>
+        <span class="menu-item mono">MEM 64%</span>
+        <span class="menu-item mono" id="clock">--:-- --</span>
+      </div>
+
+      <!-- Desktop surface where icons live -->
+      <div id="desktop">
+        <!-- Icons are injected here by main.js -->
+
+        <!-- Storage optimizer widget -->
+        <div id="optimizer">
+          <div class="opt-head">
+            <span class="opt-dot"></span>
+            <span class="opt-title">System Optimizer</span>
+          </div>
+          <div class="opt-row">
+            <span class="opt-label">Files to clean</span>
+            <span id="opt-count">—</span>
+          </div>
+          <div class="opt-row">
+            <span class="opt-label">Disk saved</span>
+            <span id="opt-saved">0 MB</span>
+          </div>
+          <div class="opt-bar"><div id="opt-fill"></div></div>
+          <p class="opt-hint">Double-click files to optimize</p>
+        </div>
+
+        <!-- Glitch/process overlay popup (appears on Player B interference) -->
+        <div id="process-popup" class="hidden">
+          <div class="pp-head">
+            <span class="pp-dot"></span>
+            <span class="pp-title" id="pp-title">System process running…</span>
+          </div>
+          <div class="pp-bar"><div id="pp-fill"></div></div>
+          <p class="pp-msg" id="pp-msg">background optimization in progress</p>
+        </div>
+
+        <!-- Custom pointer (tracks the real mouse on Player A side) -->
+        <div id="cursor-a"></div>
+      </div>
+
+    </section>
+
+    <!-- ═══════ PLAYER B · THE PRESENCE ═══════ -->
+    <section id="playerB-viewport">
+      <!-- Three.js canvas is injected here -->
+      <div class="b-caption">
+        <span>you are here</span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Top thin label strip -->
+  <div id="tag-strip">
+    <span class="tag tag-a">A · THE CURSOR</span>
+    <span class="tag tag-b">B · THE PRESENCE</span>
   </div>
 
-  <!-- Pairing popup -->
-  <div id="pair-popup" class="screen-overlay">
-    <p class="pair-text" id="pair-text"></p>
-    <div class="pair-buttons" id="pair-buttons"></div>
-  </div>
-
-  <!-- Activity overlay (waiting to start) -->
-  <div id="activity-overlay" class="screen-overlay">
-    <p class="overlay-text">your interaction will start once a user presses enter.<br>pause the timer to stop and see your results.</p>
-  </div>
-
-  <!-- Activity HUD (timer + pause) -->
-  <div id="activity-hud">
-    <span class="timer" id="timer">00:00.0</span>
-    <button class="pause-btn" id="pause-btn">pause</button>
-  </div>
-
-  <!-- Results screen -->
-  <div id="results-screen" class="screen-overlay">
-    <p class="results-text" id="results-text"></p>
-    <div class="snapshot-wrap" id="snapshot-wrap"></div>
-    <div class="results-actions">
-      <button id="save-btn">save image</button>
-      <button id="results-btn">return to lobby</button>
-    </div>
-  </div>
-
-  <script src="main.js"></script>
+  <script type="module" src="main.js"></script>
 </body>
 </html>

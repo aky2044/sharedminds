@@ -1,0 +1,315 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   The Icon and the Ghost — split prototype
+   Left:  Player A — 2D desktop interface (the cursor's reality)
+   Right: Player B — 3D mossy sanctuary in a void (the presence's reality)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --a-bg-1:    #1b2330;
+  --a-bg-2:    #0a1018;
+  --a-menu:    rgba(14, 18, 26, 0.72);
+  --a-text:    #e6ecf2;
+  --a-text-dim:#8a94a3;
+  --a-accent:  #7ec7ff;
+  --a-warn:    #ffb55a;
+  --a-danger:  #ff6470;
+  --a-ok:      #7be59d;
+
+  --b-void:    #000000;
+
+  --mono:      "SF Mono", "JetBrains Mono", "Menlo", "Courier New", monospace;
+  --sans:      -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  color: var(--a-text);
+  font-family: var(--sans);
+  cursor: default;
+}
+
+/* ─── Split ─────────────────────────────────────────────────────────────── */
+#split {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+}
+
+#playerA-viewport,
+#playerB-viewport {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PLAYER A · MAC-LIKE DESKTOP
+   ═══════════════════════════════════════════════════════════════════════════ */
+#playerA-viewport {
+  background:
+    radial-gradient(ellipse at 50% 38%, #2e4a68 0%, #12202e 55%, #070d14 100%);
+  border-right: 1px solid rgba(255,255,255,0.06);
+  cursor: none;              /* custom cursor only on Player A side */
+}
+
+/* Menu bar */
+.menubar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 26px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  background: var(--a-menu);
+  color: var(--a-text);
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  z-index: 4;
+}
+.menu-logo { font-size: 14px; opacity: 0.9; }
+.menu-item.bold { font-weight: 600; }
+.menu-item.mono { font-family: var(--mono); font-size: 11px; opacity: 0.65; }
+.menu-spacer { flex: 1; }
+
+/* Desktop surface */
+#desktop {
+  position: absolute;
+  top: 26px; left: 0; right: 0; bottom: 0;
+  overflow: hidden;
+}
+
+/* Icons */
+.dicon {
+  position: absolute;
+  width: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  user-select: none;
+  transform-origin: 50% 50%;
+  transition: transform 0.12s ease;
+}
+.dicon:hover { transform: scale(1.06); }
+.dicon.selected .dicon-tile {
+  box-shadow:
+    0 0 0 2px rgba(126, 199, 255, 0.85),
+    0 8px 28px rgba(126, 199, 255, 0.35);
+}
+.dicon-tile {
+  width: 54px;
+  height: 54px;
+  border-radius: 11px;
+  background: linear-gradient(160deg, #5a7a9a 0%, #22384e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: rgba(255,255,255,0.92);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+  position: relative;
+  overflow: hidden;
+}
+.dicon-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, transparent 46%);
+  pointer-events: none;
+}
+.dicon-tile.type-stone   { background: linear-gradient(160deg, #7d8691 0%, #2e3640 100%); }
+.dicon-tile.type-tree    { background: linear-gradient(160deg, #5ca080 0%, #1e4830 100%); }
+.dicon-tile.type-bush    { background: linear-gradient(160deg, #8bc07a 0%, #2f5a2b 100%); }
+.dicon-tile.type-fern    { background: linear-gradient(160deg, #b8cf74 0%, #486020 100%); }
+.dicon-tile.type-mushroom{ background: linear-gradient(160deg, #e4a28a 0%, #5e2a1e 100%); }
+
+.dicon-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--a-text);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.85);
+  background: rgba(0,0,0,0.32);
+  padding: 1px 6px;
+  border-radius: 3px;
+  max-width: 86px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Glitch animation — icon spazzes when Player B drags it */
+.dicon.glitch {
+  animation: glitchShake 0.5s steps(4, end) infinite;
+}
+.dicon.glitch .dicon-tile {
+  filter: hue-rotate(120deg) saturate(1.8);
+}
+@keyframes glitchShake {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-2px, 1px); }
+  40%  { transform: translate(3px, -1px); }
+  60%  { transform: translate(-1px, 2px); }
+  80%  { transform: translate(2px, -2px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Optimization (delete) animation */
+.dicon.optimizing {
+  animation: optDissolve 0.9s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes optDissolve {
+  0%   { transform: scale(1); opacity: 1; filter: brightness(1); }
+  30%  { transform: scale(1.25); opacity: 1; filter: brightness(2.2); }
+  100% { transform: scale(0.1); opacity: 0; filter: brightness(3); }
+}
+
+/* Custom cursor on A */
+#cursor-a {
+  position: absolute;
+  left: 0; top: 0;
+  width: 18px; height: 26px;
+  pointer-events: none;
+  z-index: 1000;
+  /* simple arrow built in SVG */
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 26'><path d='M1 1 L1 21 L6 16 L9 24 L12 22 L9 14 L16 14 Z' fill='white' stroke='black' stroke-width='1.2' stroke-linejoin='round'/></svg>") no-repeat center/contain;
+  filter: drop-shadow(0 0 3px rgba(126,199,255,0.45));
+  transform: translate(-3px, -2px);
+}
+#cursor-a.click {
+  animation: cursorPress 0.3s ease;
+}
+@keyframes cursorPress {
+  0%   { transform: translate(-3px, -2px) scale(1); }
+  40%  { transform: translate(-3px, -2px) scale(0.72); }
+  100% { transform: translate(-3px, -2px) scale(1); }
+}
+
+/* Optimizer widget */
+#optimizer {
+  position: absolute;
+  top: 46px;
+  right: 20px;
+  width: 230px;
+  background: rgba(14, 22, 34, 0.78);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-family: var(--sans);
+  color: var(--a-text);
+  z-index: 5;
+}
+.opt-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.opt-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--a-ok); box-shadow: 0 0 8px var(--a-ok); }
+.opt-title { font-size: 12px; font-weight: 600; letter-spacing: 0.02em; }
+.opt-row { display: flex; justify-content: space-between; font-size: 11px; padding: 3px 0; color: var(--a-text-dim); }
+.opt-row span:last-child { color: var(--a-text); font-family: var(--mono); }
+.opt-bar { margin-top: 8px; height: 4px; background: rgba(255,255,255,0.10); border-radius: 2px; overflow: hidden; }
+#opt-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--a-ok), var(--a-accent)); transition: width 0.4s ease; }
+.opt-hint { margin-top: 8px; font-size: 10px; color: var(--a-text-dim); }
+
+/* Process popup (Player B interference) */
+#process-popup {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  background: rgba(10, 14, 22, 0.92);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  padding: 18px 22px;
+  z-index: 6;
+  color: var(--a-text);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
+}
+#process-popup:not(.hidden) { opacity: 1; }
+.pp-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.pp-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--a-warn); box-shadow: 0 0 10px var(--a-warn); animation: ppDotPulse 1.1s ease-in-out infinite; }
+@keyframes ppDotPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+.pp-title { font-size: 13px; font-weight: 600; }
+.pp-bar { height: 5px; background: rgba(255,255,255,0.12); border-radius: 3px; overflow: hidden; }
+#pp-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--a-warn), var(--a-accent));
+  box-shadow: 0 0 8px var(--a-accent);
+  transition: width 0.18s linear;
+}
+.pp-msg { margin-top: 10px; font-size: 11px; color: var(--a-text-dim); font-family: var(--mono); }
+
+/* Desktop scan-line glitch overlay (runs briefly on B interference) */
+#playerA-viewport.interference::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(0deg, rgba(126,199,255,0.03) 0, rgba(126,199,255,0.03) 1px, transparent 1px, transparent 3px);
+  mix-blend-mode: screen;
+  z-index: 50;
+  animation: interfFlicker 0.14s steps(2, end) infinite;
+}
+@keyframes interfFlicker { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+
+.hidden { display: none !important; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PLAYER B · INK VOID SANCTUARY
+   ═══════════════════════════════════════════════════════════════════════════ */
+#playerB-viewport {
+  background: #000;
+}
+#playerB-viewport canvas {
+  position: absolute;
+  inset: 0;
+  cursor: grab;
+}
+#playerB-viewport canvas:active { cursor: grabbing; }
+
+.b-caption {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.42);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* ─── Top labels ───────────────────────────────────────────────────────── */
+#tag-strip {
+  position: fixed;
+  top: 2px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 14px;
+  pointer-events: none;
+  z-index: 20;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.28em;
+}
+.tag-a { color: rgba(126,199,255,0.55); margin-top: 5px; }
+.tag-b { color: rgba(140,220,170,0.55); margin-top: 5px; }
