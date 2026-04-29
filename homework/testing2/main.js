@@ -3396,6 +3396,10 @@ toolPalette.addEventListener("click", (ev) => {
 });
 function setTool(tool) {
   state.tool = tool;
+  if (tool !== "weed") {
+    weedHoverWeed = null;
+    weedPullHintEl?.classList.add("hidden");
+  }
   $$("#tool-palette .tool").forEach(b => b.classList.toggle("active", b.dataset.tool === tool));
   // strip ALL tool-* classes (keep hover-grab if currently set)
   viewportB.className = viewportB.className.replace(/\btool-[a-z]+\b/g, "").trim();
@@ -3410,7 +3414,7 @@ function setTool(tool) {
 const TOOL_HINTS = {
   look:    "drag empty space to look around",
   prune:   "click leaves on a tree, bush, or fern to prune",
-  weed:    "hover a red weed and drag to pull it",
+  weed:    "hover a weed, then click and drag to pull it",
   water:   "click on the soil near a plant to water it",
   pest:    "click on a plant to check for pests",
   compost: "click on the compost pile to compost dead matter",
@@ -4639,7 +4643,6 @@ function devFire(action) {
     case "a:notif":       notify("warn", "Notification", "A background process is running."); break;
     case "a:notif-flood": notifyBurstEscalating("warn", "Process busy", "Some apps may slow down.", 14); break;
     case "a:err-popup":   showWinError(); break;
-    case "a:err-stack":   showWinErrorEscalating(14, null, null); break;
     case "a:flicker":     flickerOneIcon(); break;
     case "a:corrupt":     corruptFiles(1 + Math.floor(Math.random() * 2)); break;
     case "a:leak":        leakOnA(); break;
@@ -4692,7 +4695,7 @@ window.__devSolo = (mode) => {
 // ═════════════════════════════════════════════════════════════════════════════
 //  SWAY ANIMATION  (gentle breeze always; stronger during wind events)
 // ═════════════════════════════════════════════════════════════════════════════
-function applySway(t, amplitude, wind) {
+function applySway(t, amplitude, wind, dt) {
   // For heavy wind we add a single dominant gust direction so all plants
   // tilt the SAME way at the same time — looks like a real storm.
   const gustDir = Math.sin(t * 0.7);                  // -1..1, slowly varying
@@ -4723,7 +4726,7 @@ function applySway(t, amplitude, wind) {
     const hover = weedHoverWeed === w && state.tool === "weed";
     const tgt = hover ? 1.07 : 1.0;
     const c = w.mesh.scale.x;
-    const n = c + (tgt - c) * Math.min(1, (typeof performance !== "undefined" ? 0.016 : 0.02) * 14);
+    const n = c + (tgt - c) * Math.min(1, dt * 14);
     w.mesh.scale.set(n, n, n);
   }
   // grass: just rotate the whole instanced mesh subtly when there's wind
@@ -4798,7 +4801,7 @@ function animate() {
   const wind = getWindStrength();           // 0..~3
   const baseSway = 0.04;                    // gentle ambient sway
   const swayAmount = baseSway + wind * 0.07;
-  applySway(t, swayAmount, wind);
+  applySway(t, swayAmount, wind, dt);
 
   // invasive bloom spreading
   stepInvasiveSpread(tt);
