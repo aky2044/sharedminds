@@ -1,0 +1,17 @@
+rules_version = '2';
+
+// Skeleton — tighten before production: validate uid membership on every write,
+// rate-limit with App Check, and scope reads to active sessions only.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /sessions/{sessionId} {
+      allow read, write: if false;
+
+      match /actions/{actionId} {
+        allow read, write: if false;
+      }
+    }
+  }
+}
