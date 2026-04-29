@@ -4,84 +4,190 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Icon and the Ghost</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
   <main id="split">
 
     <!-- ═══════ PLAYER A · THE CURSOR ═══════ -->
-    <section id="playerA-viewport">
+    <section id="playerA">
+      <canvas id="wallpaper"></canvas>
 
-      <!-- macOS-style menu bar -->
       <div class="menubar">
-        <span class="menu-item menu-logo">◉</span>
-        <span class="menu-item bold">Finder</span>
-        <span class="menu-item">File</span>
-        <span class="menu-item">Edit</span>
-        <span class="menu-item">View</span>
-        <span class="menu-item">Go</span>
-        <span class="menu-item">Window</span>
-        <span class="menu-item">Help</span>
-        <span class="menu-spacer"></span>
-        <span class="menu-item mono">CPU 12%</span>
-        <span class="menu-item mono">MEM 64%</span>
-        <span class="menu-item mono" id="clock">--:-- --</span>
+        <span class="mb-item mb-apple"></span>
+        <span class="mb-item mb-bold">Finder</span>
+        <span class="mb-item">File</span>
+        <span class="mb-item">Edit</span>
+        <span class="mb-item">View</span>
+        <span class="mb-item">Go</span>
+        <span class="mb-item">Window</span>
+        <span class="mb-item">Help</span>
+        <span class="mb-spacer"></span>
+        <span class="mb-tray">
+          <span class="tray-ic" id="mb-battery">100%</span>
+          <span class="tray-ic">◔</span>
+          <span class="tray-ic">⌕</span>
+          <span class="tray-ic">⊞</span>
+          <span class="tray-ic" id="mb-clock">—</span>
+        </span>
       </div>
 
-      <!-- Desktop surface where icons live -->
-      <div id="desktop">
-        <!-- Icons are injected here by main.js -->
+      <div id="desktop"></div>
+      <div id="dock"></div>
 
-        <!-- Storage optimizer widget -->
-        <div id="optimizer">
-          <div class="opt-head">
-            <span class="opt-dot"></span>
-            <span class="opt-title">System Optimizer</span>
-          </div>
-          <div class="opt-row">
-            <span class="opt-label">Files to clean</span>
-            <span id="opt-count">—</span>
-          </div>
-          <div class="opt-row">
-            <span class="opt-label">Disk saved</span>
-            <span id="opt-saved">0 MB</span>
-          </div>
-          <div class="opt-bar"><div id="opt-fill"></div></div>
-          <p class="opt-hint">Double-click files to optimize</p>
+      <div id="leaks-a"></div>
+      <div id="sleep-overlay"></div>
+
+      <!-- Click-block scrim (toggled by JS during loading/rainbow wheel) -->
+      <div id="cursor-block" class="hidden"></div>
+      <div id="cursor-a"></div>
+
+      <div id="big-event-a"></div>
+
+      <div class="hud-pressure" id="hud-a">PRESSURE 0</div>
+
+      <!-- Dev mode panel for Player A -->
+      <div id="dev-panel-a" class="dev-panel hidden">
+        <div class="dev-head">DEV · Player A — fire locally</div>
+        <div class="dev-rows">
+          <button class="dev-btn" data-dev="a:cursor-lag">cursor lag</button>
+          <button class="dev-btn" data-dev="a:rubberband">rubber-band</button>
+          <button class="dev-btn" data-dev="a:spin">loading wheel</button>
+          <button class="dev-btn" data-dev="a:rainbow">rainbow wheel</button>
+          <button class="dev-btn" data-dev="a:notif">notification</button>
+          <button class="dev-btn" data-dev="a:notif-flood">notification flood</button>
+          <button class="dev-btn" data-dev="a:err-popup">error popup</button>
+          <button class="dev-btn" data-dev="a:flicker">icon flicker</button>
+          <button class="dev-btn" data-dev="a:corrupt">corrupt files</button>
+          <button class="dev-btn" data-dev="a:leak">organic leak</button>
+          <button class="dev-btn" data-dev="a:big-restart">BIG · restart needed</button>
+          <button class="dev-btn" data-dev="a:big-storage">BIG · low storage</button>
+          <button class="dev-btn" data-dev="a:big-browser">BIG · browser issue</button>
         </div>
-
-        <!-- Glitch/process overlay popup (appears on Player B interference) -->
-        <div id="process-popup" class="hidden">
-          <div class="pp-head">
-            <span class="pp-dot"></span>
-            <span class="pp-title" id="pp-title">System process running…</span>
-          </div>
-          <div class="pp-bar"><div id="pp-fill"></div></div>
-          <p class="pp-msg" id="pp-msg">background optimization in progress</p>
-        </div>
-
-        <!-- Custom pointer (tracks the real mouse on Player A side) -->
-        <div id="cursor-a"></div>
       </div>
-
     </section>
 
     <!-- ═══════ PLAYER B · THE PRESENCE ═══════ -->
-    <section id="playerB-viewport">
-      <!-- Three.js canvas is injected here -->
-      <div class="b-caption">
-        <span>you are here</span>
+    <section id="playerB">
+      <!-- Tool palette (monochrome SVG icons) -->
+      <div id="tool-palette">
+        <button class="tool active" data-tool="look"    title="Look around (drag empty space)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M2 12 C 5 6, 9 4, 12 4 S 19 6, 22 12 C 19 18, 15 20, 12 20 S 5 18, 2 12 Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+        <button class="tool" data-tool="prune"   title="Prune leaves">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="6.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="16.5" r="2.5"/>
+            <line x1="8.3" y1="9.3" x2="20" y2="20"/><line x1="8.3" y1="14.7" x2="20" y2="4"/></svg>
+        </button>
+        <button class="tool" data-tool="weed"    title="Pull weeds">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M12 22 V 11"/><path d="M12 11 C 8 9, 6 6, 7 3"/><path d="M12 11 C 16 9, 18 6, 17 3"/>
+            <path d="M12 14 C 9 13, 7 11, 7 8"/></svg>
+        </button>
+        <button class="tool" data-tool="water"   title="Water">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M12 3 C 8 8, 5 12, 5 15 a 7 7 0 0 0 14 0 c 0 -3 -3 -7 -7 -12 Z"/></svg>
+        </button>
+        <button class="tool" data-tool="pest"    title="Remove pests">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <ellipse cx="12" cy="13" rx="5" ry="6"/><line x1="12" y1="7" x2="12" y2="13"/>
+            <path d="M7 11 L 4 8"/><path d="M17 11 L 20 8"/>
+            <path d="M7 14 L 4 14"/><path d="M17 14 L 20 14"/>
+            <path d="M7 17 L 4 20"/><path d="M17 17 L 20 20"/></svg>
+        </button>
+        <button class="tool" data-tool="compost" title="Compost (drop dead matter on the pile)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M12 3 C 14 6, 14 8, 12 11 C 10 8, 10 6, 12 3 Z"/>
+            <path d="M12 11 V 21"/><path d="M5 21 H 19"/></svg>
+        </button>
+      </div>
+
+      <!-- Garden health HUD -->
+      <div id="garden-health">
+        <div class="gh-row" id="gh-toggle">
+          <span class="gh-label">GARDEN HEALTH</span>
+          <span class="gh-num" id="gh-num">100</span>
+          <span class="gh-arrow" id="gh-arrow">▾</span>
+        </div>
+        <div class="gh-bar"><div class="gh-fill" id="gh-fill"></div></div>
+        <div class="gh-issues hidden" id="gh-issues">
+          <div class="gh-issues-head">ISSUES</div>
+          <ul id="gh-issues-list"></ul>
+        </div>
+      </div>
+
+      <div class="b-caption" id="b-caption">drag empty space to look · pick a tool on the left</div>
+      <div id="weed-pull-hint" class="weed-pull-hint hidden" role="status">Click and drag to pull on the weed</div>
+
+      <!-- DOM markers for in-world flora alerts (e.g. pest exclamation) -->
+      <div id="flora-markers"></div>
+      <!-- Hover bounding box drawn over an infested patch -->
+      <div id="patch-hover" class="hidden"></div>
+      <!-- Diagnosis page (zoom-in pest / root-rot mini-pages) -->
+      <div id="diagnosis-overlay" class="hidden"></div>
+
+      <div id="big-event-b"></div>
+
+      <div class="hud-pressure dark" id="hud-b">PRESSURE 0</div>
+
+      <!-- Dev mode panel for Player B -->
+      <div id="dev-panel-b" class="dev-panel hidden">
+        <div class="dev-head">DEV · Player B — fire locally</div>
+        <div class="dev-rows">
+          <button class="dev-btn" data-dev="b:weed">spawn weed</button>
+          <button class="dev-btn" data-dev="b:weeds5">spawn 5 weeds</button>
+          <button class="dev-btn" data-dev="b:pest">spawn pest</button>
+          <button class="dev-btn" data-dev="b:crack">spawn crack</button>
+          <button class="dev-btn" data-dev="b:tile-dissolve">dissolve outskirt tiles</button>
+          <button class="dev-btn" data-dev="b:wind">wind storm (strong)</button>
+          <button class="dev-btn" data-dev="b:drain">drain plant water</button>
+          <button class="dev-btn" data-dev="b:wilt">wilt all plants</button>
+          <button class="dev-btn" data-dev="b:sun-dim">false sun dim</button>
+          <button class="dev-btn" data-dev="b:sun-dead">false sun dead</button>
+          <button class="dev-btn" data-dev="b:big-bloom">BIG · invasive bloom</button>
+          <button class="dev-btn" data-dev="b:big-rot">BIG · root rot</button>
+          <button class="dev-btn" data-dev="b:big-erosion">BIG · soil erosion</button>
+        </div>
       </div>
     </section>
 
   </main>
 
-  <!-- Top thin label strip -->
+  <!-- Top labels -->
   <div id="tag-strip">
     <span class="tag tag-a">A · THE CURSOR</span>
     <span class="tag tag-b">B · THE PRESENCE</span>
   </div>
 
+  <!-- Global dev mode toggle + solo player view toggle -->
+  <button id="dev-toggle" title="Toggle dev mode">DEV</button>
+  <div id="solo-toggle" class="hidden">
+    <button data-solo="split" class="active">SPLIT</button>
+    <button data-solo="a">SOLO&nbsp;A</button>
+    <button data-solo="b">SOLO&nbsp;B</button>
+  </div>
+
+  <div id="demo-row" class="hidden">
+    <button id="demo-start" type="button">DEMO · solo + AI partner</button>
+    <button id="demo-stop" type="button">STOP DEMO</button>
+    <span id="demo-status"></span>
+  </div>
+
+  <div id="context-menu" class="hidden"></div>
+
+  <!-- Win-95 style cascading error popups stack here -->
+  <div id="error-stack"></div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
   <script type="module" src="main.js"></script>
 </body>
 </html>

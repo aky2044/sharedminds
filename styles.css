@@ -977,6 +977,22 @@ body.dev-on .hud-pressure { display: block; }
 #playerB.hover-grab canvas { cursor: grab; }
 #playerB.hover-grab.dragging canvas { cursor: grabbing; }
 
+.weed-pull-hint {
+  position: absolute;
+  z-index: 6;
+  max-width: 220px;
+  padding: 8px 11px;
+  background: rgba(12, 14, 18, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: var(--sans);
+  font-size: 12px;
+  line-height: 1.35;
+  pointer-events: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
 .b-caption {
   position: absolute;
   bottom: 10px;

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Icon and the Ghost</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="split">
+
+    <!-- ═══════ PLAYER A · THE CURSOR ═══════ -->
+    <section id="playerA-viewport">
+
+      <!-- macOS-style menu bar -->
+      <div class="menubar">
+        <span class="menu-item menu-logo">◉</span>
+        <span class="menu-item bold">Finder</span>
+        <span class="menu-item">File</span>
+        <span class="menu-item">Edit</span>
+        <span class="menu-item">View</span>
+        <span class="menu-item">Go</span>
+        <span class="menu-item">Window</span>
+        <span class="menu-item">Help</span>
+        <span class="menu-spacer"></span>
+        <span class="menu-item mono">CPU 12%</span>
+        <span class="menu-item mono">MEM 64%</span>
+        <span class="menu-item mono" id="clock">--:-- --</span>
+      </div>
+
+      <!-- Desktop surface where icons live -->
+      <div id="desktop">
+        <!-- Icons are injected here by main.js -->
+
+        <!-- Storage optimizer widget -->
+        <div id="optimizer">
+          <div class="opt-head">
+            <span class="opt-dot"></span>
+            <span class="opt-title">System Optimizer</span>
+          </div>
+          <div class="opt-row">
+            <span class="opt-label">Files to clean</span>
+            <span id="opt-count">—</span>
+          </div>
+          <div class="opt-row">
+            <span class="opt-label">Disk saved</span>
+            <span id="opt-saved">0 MB</span>
+          </div>
+          <div class="opt-bar"><div id="opt-fill"></div></div>
+          <p class="opt-hint">Double-click files to optimize</p>
+        </div>
+
+        <!-- Glitch/process overlay popup (appears on Player B interference) -->
+        <div id="process-popup" class="hidden">
+          <div class="pp-head">
+            <span class="pp-dot"></span>
+            <span class="pp-title" id="pp-title">System process running…</span>
+          </div>
+          <div class="pp-bar"><div id="pp-fill"></div></div>
+          <p class="pp-msg" id="pp-msg">background optimization in progress</p>
+        </div>
+
+        <!-- Custom pointer (tracks the real mouse on Player A side) -->
+        <div id="cursor-a"></div>
+      </div>
+
+    </section>
+
+    <!-- ═══════ PLAYER B · THE PRESENCE ═══════ -->
+    <section id="playerB-viewport">
+      <!-- Three.js canvas is injected here -->
+      <div class="b-caption">
+        <span>you are here</span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Top thin label strip -->
+  <div id="tag-strip">
+    <span class="tag tag-a">A · THE CURSOR</span>
+    <span class="tag tag-b">B · THE PRESENCE</span>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
